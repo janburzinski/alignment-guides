@@ -1,0 +1,166 @@
+[data-alignment-guides-root],
+[data-alignment-guides-root] * {
+  box-sizing: border-box !important;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+[data-alignment-guides-root] {
+  --ag-accent: #ff3d8d;
+  --ag-ruler: #15161a;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+}
+
+.ag-ruler,
+.ag-corner,
+.ag-toolbar,
+.ag-guide {
+  pointer-events: auto !important;
+  user-select: none !important;
+}
+
+.ag-ruler {
+  position: absolute !important;
+  background-color: var(--ag-ruler) !important;
+  background-image: repeating-linear-gradient(
+    var(--tick-direction),
+    transparent 0,
+    transparent 9px,
+    rgba(255, 255, 255, 0.35) 10px
+  ) !important;
+  cursor: crosshair !important;
+}
+
+.ag-ruler-x {
+  --tick-direction: 90deg;
+  top: 0 !important;
+  left: 20px !important;
+  right: 0 !important;
+  height: 20px !important;
+  border-bottom: 1px solid #303238 !important;
+}
+
+.ag-ruler-y {
+  --tick-direction: 0deg;
+  top: 20px !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 20px !important;
+  border-right: 1px solid #303238 !important;
+}
+
+.ag-corner {
+  position: absolute !important;
+  inset: 0 auto auto 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  background: var(--ag-accent) !important;
+}
+
+.ag-toolbar {
+  position: absolute !important;
+  top: 32px !important;
+  left: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 42px !important;
+  padding: 6px !important;
+  color: #f6f7f9 !important;
+  background: rgba(21, 22, 26, 0.96) !important;
+  border: 1px solid #303238 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28) !important;
+  transform: translateX(-50%) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.ag-toolbar button {
+  height: 30px !important;
+  padding: 0 11px !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  color: #fff !important;
+  background: var(--ag-accent) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 30px !important;
+  cursor: pointer !important;
+}
+
+.ag-toolbar button:hover { filter: brightness(1.1) !important; }
+.ag-toolbar button.ag-active {
+  background: #0878dc !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+.ag-toolbar button.ag-secondary { background: #34363d !important; }
+
+.ag-toolbar button.ag-icon {
+  width: 30px !important;
+  padding: 0 !important;
+  color: #b8bbc4 !important;
+  background: transparent !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+}
+
+.ag-status {
+  max-width: 230px !important;
+  padding: 0 6px !important;
+  overflow: hidden !important;
+  color: #b8bbc4 !important;
+  font-size: 11px !important;
+  line-height: 30px !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ag-guide {
+  position: absolute !important;
+  background: var(--ag-accent) !important;
+  cursor: grab !important;
+}
+
+.ag-guide-x {
+  top: 20px !important;
+  bottom: 0 !important;
+  width: 1px !important;
+}
+
+.ag-guide-y {
+  right: 0 !important;
+  left: 20px !important;
+  height: 1px !important;
+}
+
+.ag-guide.ag-auto {
+  background: repeating-linear-gradient(
+    var(--guide-direction),
+    #48a7ff 0,
+    #48a7ff 5px,
+    transparent 5px,
+    transparent 9px
+  ) !important;
+}
+
+.ag-guide-x.ag-auto { --guide-direction: 0deg; }
+.ag-guide-y.ag-auto { --guide-direction: 90deg; }
+.ag-guide.ag-dragging { cursor: grabbing !important; }
+
+.ag-guide span {
+  position: absolute !important;
+  padding: 2px 5px !important;
+  border-radius: 3px !important;
+  color: #fff !important;
+  background: var(--ag-accent) !important;
+  font-size: 10px !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 14px !important;
+  white-space: nowrap !important;
+}
+
+.ag-guide.ag-auto span { background: #0878dc !important; }
+.ag-guide-x span { top: 3px !important; left: 4px !important; }
+.ag-guide-y span { top: 4px !important; left: 3px !important; }

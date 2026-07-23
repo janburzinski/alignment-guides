@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Alignment Guides",
+  "version": "0.2.0",
+  "description": "Drag manual guides from page rulers or detect shared alignments automatically.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_title": "Toggle Alignment Guides"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
