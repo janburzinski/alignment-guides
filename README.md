@@ -4,7 +4,7 @@ A tiny, open-source browser extension for checking visual alignment directly on 
 
 ## Demo
 
-https://x.com/miaugladiator1/status/2080181975998951815/video/1
+<video src="assets/demo.mp4" controls muted width="100%"></video>
 
 ## Install with an agent
 
