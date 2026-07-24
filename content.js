@@ -13,6 +13,8 @@
     <div class="ag-ruler ag-ruler-y" title="Drag right to create a vertical guide"></div>
     <div class="ag-corner"></div>
     <div class="ag-toolbar">
+      <button type="button" data-action="add-x" class="ag-secondary">+ Vertical</button>
+      <button type="button" data-action="add-y" class="ag-secondary">+ Horizontal</button>
       <button type="button" data-action="auto">Auto align</button>
       <button type="button" data-action="clear" class="ag-secondary">Clear</button>
       <span class="ag-status">Drag from a ruler</span>
@@ -21,6 +23,8 @@
     <div class="ag-guide-layer"></div>
   `;
   document.documentElement.append(root);
+
+  const RULER_SIZE = 20;
 
   const layer = root.querySelector(".ag-guide-layer");
   const status = root.querySelector(".ag-status");
@@ -37,14 +41,17 @@
   const positionGuide = (guide, position) => {
     const axis = guide.dataset.axis;
     const max = axis === "x" ? window.innerWidth : window.innerHeight;
-    const bounded = Math.max(20, Math.min(position, max));
+    const bounded = Math.max(RULER_SIZE, Math.min(position, max));
     guide.style[axis === "x" ? "left" : "top"] = `${bounded}px`;
     guide.querySelector("span").textContent = `${Math.round(bounded)} px`;
   };
 
+  let stopActiveDrag;
+
   const startDragging = (event, guide) => {
     event.preventDefault();
     guide.classList.add("ag-dragging");
+    guide.setPointerCapture?.(event.pointerId);
 
     const move = (moveEvent) => {
       positionGuide(
@@ -53,14 +60,18 @@
       );
     };
     const stop = () => {
+      stopActiveDrag = undefined;
       guide.classList.remove("ag-dragging");
       window.removeEventListener("pointermove", move, true);
       window.removeEventListener("pointerup", stop, true);
+      window.removeEventListener("pointercancel", stop, true);
       setStatus("Double-click a guide to remove it");
     };
 
+    stopActiveDrag = stop;
     window.addEventListener("pointermove", move, true);
     window.addEventListener("pointerup", stop, true);
+    window.addEventListener("pointercancel", stop, true);
   };
 
   const addGuide = (axis, position, automatic = false) => {
@@ -78,13 +89,6 @@
     return guide;
   };
 
-  horizontalRuler.addEventListener("pointerdown", (event) => {
-    startDragging(event, addGuide("y", event.clientY));
-  });
-  verticalRuler.addEventListener("pointerdown", (event) => {
-    startDragging(event, addGuide("x", event.clientX));
-  });
-
   const collectSharedPositions = (rects, axis) => {
     const positions = new Map();
     const viewportLimit = axis === "x" ? window.innerWidth : window.innerHeight;
@@ -96,7 +100,7 @@
 
       for (const value of values) {
         const rounded = Math.round(value / 2) * 2;
-        if (rounded >= 20 && rounded <= viewportLimit) {
+        if (rounded >= RULER_SIZE && rounded <= viewportLimit) {
           positions.set(rounded, (positions.get(rounded) || 0) + 1);
         }
       }
@@ -114,25 +118,72 @@
     layer.querySelectorAll(".ag-auto").forEach((guide) => guide.remove());
 
     const seenRects = new Set();
-    const rects = [...document.body.querySelectorAll("*")]
+    const styleCache = new WeakMap();
+    const rectCache = new WeakMap();
+    const getStyle = (element) => {
+      if (!styleCache.has(element)) {
+        styleCache.set(element, getComputedStyle(element));
+      }
+      return styleCache.get(element);
+    };
+    const getRect = (element) => {
+      if (!rectCache.has(element)) {
+        rectCache.set(element, element.getBoundingClientRect());
+      }
+      return rectCache.get(element);
+    };
+    const getVisibleRect = (element, rect) => {
+      let visibleLeft = Math.max(rect.left, RULER_SIZE);
+      let visibleTop = Math.max(rect.top, RULER_SIZE);
+      let visibleRight = Math.min(rect.right, window.innerWidth);
+      let visibleBottom = Math.min(rect.bottom, window.innerHeight);
+
+      for (let current = element; current; current = current.parentElement) {
+        const style = getStyle(current);
+        if (
+          style.visibility === "hidden" ||
+          style.visibility === "collapse" ||
+          style.display === "none" ||
+          Number(style.opacity) === 0
+        ) {
+          return null;
+        }
+
+        if (current !== element) {
+          const currentRect = getRect(current);
+          const clipLeft = currentRect.left + current.clientLeft;
+          const clipTop = currentRect.top + current.clientTop;
+          const clipRight = clipLeft + current.clientWidth;
+          const clipBottom = clipTop + current.clientHeight;
+          if (style.overflowX !== "visible") {
+            visibleLeft = Math.max(visibleLeft, clipLeft);
+            visibleRight = Math.min(visibleRight, clipRight);
+          }
+          if (style.overflowY !== "visible") {
+            visibleTop = Math.max(visibleTop, clipTop);
+            visibleBottom = Math.min(visibleBottom, clipBottom);
+          }
+        }
+      }
+
+      if (visibleRight <= visibleLeft || visibleBottom <= visibleTop) {
+        return null;
+      }
+
+      return {
+        left: visibleLeft,
+        top: visibleTop,
+        right: visibleRight,
+        bottom: visibleBottom,
+        width: visibleRight - visibleLeft,
+        height: visibleBottom - visibleTop,
+      };
+    };
+
+    const rects = [...(document.body?.querySelectorAll("*") ?? [])]
       .filter((element) => !root.contains(element))
-      .map((element) => {
-        const style = getComputedStyle(element);
-        const rect = element.getBoundingClientRect();
-        return { rect, style };
-      })
-      .filter(({ rect, style }) =>
-        style.visibility !== "hidden" &&
-        style.display !== "none" &&
-        Number(style.opacity) !== 0 &&
-        rect.width >= 16 &&
-        rect.height >= 12 &&
-        rect.right > 20 &&
-        rect.bottom > 20 &&
-        rect.left < window.innerWidth &&
-        rect.top < window.innerHeight,
-      )
-      .map(({ rect }) => rect)
+      .map((element) => getVisibleRect(element, getRect(element)))
+      .filter((rect) => rect && rect.width >= 16 && rect.height >= 12)
       .filter((rect) => {
         const key = [rect.left, rect.top, rect.width, rect.height]
           .map((value) => Math.round(value * 2) / 2)
@@ -172,16 +223,19 @@
   };
 
   const mutationObserver = new MutationObserver(scheduleAutoUpdate);
-  mutationObserver.observe(document.body, {
-    attributes: true,
-    childList: true,
-    subtree: true,
-  });
+  if (document.body) {
+    mutationObserver.observe(document.body, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+  }
   window.addEventListener("resize", scheduleAutoUpdate);
   window.addEventListener("scroll", scheduleAutoUpdate, true);
   document.fonts?.addEventListener("loadingdone", scheduleAutoUpdate);
 
   root.__alignmentGuidesCleanup = () => {
+    stopActiveDrag?.();
     window.clearTimeout(autoUpdateTimer);
     mutationObserver.disconnect();
     window.removeEventListener("resize", scheduleAutoUpdate);
@@ -189,13 +243,31 @@
     document.fonts?.removeEventListener("loadingdone", scheduleAutoUpdate);
   };
 
-  autoButton.addEventListener("click", () => setAutoEnabled(!autoEnabled));
-  root.querySelector('[data-action="clear"]').addEventListener("click", () => {
+  const onAction = (name, handler) => {
+    root.querySelector(`[data-action="${name}"]`).addEventListener("click", handler);
+  };
+
+  horizontalRuler.addEventListener("pointerdown", (event) => {
+    startDragging(event, addGuide("y", event.clientY));
+  });
+  verticalRuler.addEventListener("pointerdown", (event) => {
+    startDragging(event, addGuide("x", event.clientX));
+  });
+  onAction("add-x", () => {
+    addGuide("x", window.innerWidth / 2);
+    setStatus("Drag the new vertical guide into place");
+  });
+  onAction("add-y", () => {
+    addGuide("y", window.innerHeight / 2);
+    setStatus("Drag the new horizontal guide into place");
+  });
+  onAction("auto", () => setAutoEnabled(!autoEnabled));
+  onAction("clear", () => {
     setAutoEnabled(false);
     layer.replaceChildren();
     setStatus("All guides cleared");
   });
-  root.querySelector('[data-action="close"]').addEventListener("click", () => {
+  onAction("close", () => {
     root.__alignmentGuidesCleanup();
     root.remove();
   });

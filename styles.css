@@ -13,15 +13,15 @@
   pointer-events: none !important;
 }
 
-.ag-ruler,
-.ag-corner,
-.ag-toolbar,
-.ag-guide {
+[data-alignment-guides-root] .ag-ruler,
+[data-alignment-guides-root] .ag-corner,
+[data-alignment-guides-root] .ag-toolbar,
+[data-alignment-guides-root] .ag-guide {
   pointer-events: auto !important;
   user-select: none !important;
 }
 
-.ag-ruler {
+[data-alignment-guides-root] .ag-ruler {
   position: absolute !important;
   background-color: var(--ag-ruler) !important;
   background-image: repeating-linear-gradient(
@@ -33,7 +33,7 @@
   cursor: crosshair !important;
 }
 
-.ag-ruler-x {
+[data-alignment-guides-root] .ag-ruler-x {
   --tick-direction: 90deg;
   top: 0 !important;
   left: 20px !important;
@@ -42,7 +42,7 @@
   border-bottom: 1px solid #303238 !important;
 }
 
-.ag-ruler-y {
+[data-alignment-guides-root] .ag-ruler-y {
   --tick-direction: 0deg;
   top: 20px !important;
   bottom: 0 !important;
@@ -51,7 +51,7 @@
   border-right: 1px solid #303238 !important;
 }
 
-.ag-corner {
+[data-alignment-guides-root] .ag-corner {
   position: absolute !important;
   inset: 0 auto auto 0 !important;
   width: 20px !important;
@@ -59,7 +59,7 @@
   background: var(--ag-accent) !important;
 }
 
-.ag-toolbar {
+[data-alignment-guides-root] .ag-toolbar {
   position: absolute !important;
   top: 32px !important;
   left: 50% !important;
@@ -77,7 +77,7 @@
   backdrop-filter: blur(10px) !important;
 }
 
-.ag-toolbar button {
+[data-alignment-guides-root] .ag-toolbar button {
   height: 30px !important;
   padding: 0 11px !important;
   border: 0 !important;
@@ -90,14 +90,14 @@
   cursor: pointer !important;
 }
 
-.ag-toolbar button:hover { filter: brightness(1.1) !important; }
-.ag-toolbar button.ag-active {
+[data-alignment-guides-root] .ag-toolbar button:hover { filter: brightness(1.1) !important; }
+[data-alignment-guides-root] .ag-toolbar button.ag-active {
   background: #0878dc !important;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
 }
-.ag-toolbar button.ag-secondary { background: #34363d !important; }
+[data-alignment-guides-root] .ag-toolbar button.ag-secondary { background: #34363d !important; }
 
-.ag-toolbar button.ag-icon {
+[data-alignment-guides-root] .ag-toolbar button.ag-icon {
   width: 30px !important;
   padding: 0 !important;
   color: #b8bbc4 !important;
@@ -106,7 +106,7 @@
   font-weight: 400 !important;
 }
 
-.ag-status {
+[data-alignment-guides-root] .ag-status {
   max-width: 230px !important;
   padding: 0 6px !important;
   overflow: hidden !important;
@@ -117,25 +117,25 @@
   white-space: nowrap !important;
 }
 
-.ag-guide {
+[data-alignment-guides-root] .ag-guide {
   position: absolute !important;
   background: var(--ag-accent) !important;
   cursor: grab !important;
 }
 
-.ag-guide-x {
+[data-alignment-guides-root] .ag-guide-x {
   top: 20px !important;
   bottom: 0 !important;
   width: 1px !important;
 }
 
-.ag-guide-y {
+[data-alignment-guides-root] .ag-guide-y {
   right: 0 !important;
   left: 20px !important;
   height: 1px !important;
 }
 
-.ag-guide.ag-auto {
+[data-alignment-guides-root] .ag-guide.ag-auto {
   background: repeating-linear-gradient(
     var(--guide-direction),
     #48a7ff 0,
@@ -145,11 +145,11 @@
   ) !important;
 }
 
-.ag-guide-x.ag-auto { --guide-direction: 0deg; }
-.ag-guide-y.ag-auto { --guide-direction: 90deg; }
-.ag-guide.ag-dragging { cursor: grabbing !important; }
+[data-alignment-guides-root] .ag-guide-x.ag-auto { --guide-direction: 0deg; }
+[data-alignment-guides-root] .ag-guide-y.ag-auto { --guide-direction: 90deg; }
+[data-alignment-guides-root] .ag-guide.ag-dragging { cursor: grabbing !important; }
 
-.ag-guide span {
+[data-alignment-guides-root] .ag-guide span {
   position: absolute !important;
   padding: 2px 5px !important;
   border-radius: 3px !important;
@@ -161,6 +161,6 @@
   white-space: nowrap !important;
 }
 
-.ag-guide.ag-auto span { background: #0878dc !important; }
-.ag-guide-x span { top: 3px !important; left: 4px !important; }
-.ag-guide-y span { top: 4px !important; left: 3px !important; }
+[data-alignment-guides-root] .ag-guide.ag-auto span { background: #0878dc !important; }
+[data-alignment-guides-root] .ag-guide-x span { top: 3px !important; left: 4px !important; }
+[data-alignment-guides-root] .ag-guide-y span { top: 4px !important; left: 3px !important; }
