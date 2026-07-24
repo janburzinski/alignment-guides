@@ -2,6 +2,10 @@
 
 A tiny, open-source browser extension for checking visual alignment directly on any web page. It has no dependencies, build step, tracking, or network requests.
 
+## Demo
+
+https://x.com/miaugladiator1/status/2080181975998951815/video/1
+
 ## Install with an agent
 
 Copy and paste this prompt into an agent that can control your computer:
