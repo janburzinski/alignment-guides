@@ -34,7 +34,7 @@ Alignment Guides requests only `activeTab` and `scripting`. It can inspect the c
 
 ## Development
 
-There are no dependencies and no build step. Edit `background.js`, `content.js`, or `styles.css`, then click the reload button on the extension card in `chrome://extensions` and reactivate it on the page.
+There are no dependencies and no build step. Edit the files in `src/`, then click the reload button on the extension card in `chrome://extensions` and reactivate it on the page.
 
 Contributions and bug reports are welcome. Please keep changes focused and preserve the extension's dependency-free setup.
 

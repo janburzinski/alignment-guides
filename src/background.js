@@ -4,12 +4,12 @@ chrome.action.onClicked.addListener(async (tab) => {
   try {
     await chrome.scripting.insertCSS({
       target: { tabId: tab.id },
-      files: ["styles.css"],
+      files: ["src/styles.css"],
     });
 
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      files: ["content.js"],
+      files: ["src/content.js"],
     });
   } catch (error) {
     console.warn("Alignment Guides could not run on this page.", error);
